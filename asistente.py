@@ -6,8 +6,12 @@ import datetime
 import pyautogui, webbrowser
 from time import sleep
 
-name = 'jarvis'
-# listener = sr.Recognizer()
+import os
+
+name = 'alexa'
+
+flag = 1
+listener = sr.Recognizer()
 
 engine = pyttsx3.init()
 
@@ -22,9 +26,10 @@ def talk(text):
     engine.say(text)
     engine.runAndWait()
 
-
+rec = ''
 def listen():
-    listener = sr.Recognizer()
+    # listener = sr.Recognizer()
+    flag = 1
     try:
         with sr.Microphone() as source:
             print("Escuchando...")
@@ -35,20 +40,21 @@ def listen():
                 if name in rec:
                     rec = rec.replace(name, '')
                     print(rec)
+                    flag = run(rec)       
             except:
                 pass  
     except:
         pass
-    return rec
+    return flag
 
-def run():
-    # r = listen()
-    r = 'jarvis'
+def run(r):
+
+    # r = 'jarvis'
 
     re = r.split()
 
     if len(re) == 1:
-        if re[0] == "jarvis":
+        if re[0] == "alexa":
             talk("Digame en que lo ayudo")
     elif 'reproduce' in r:
         music = r.replace('reproduce', '')
@@ -69,14 +75,37 @@ def run():
         # print(hr)
         # print(m)
         # pywhatkit.sendwhatmsg("+51940617299", "hola bosha soy Jarvis", int(hr), int(m))
-        webbrowser.open('https://web.whatsapp.com/send?phone=+51940617299')
-        sleep(10)
-        r = r.replace('enviar', '')
-        pyautogui.typewrite(r)
-        pyautogui.press('enter')
-
+        contactos = ['bocha', 'mi']
+        found = False
+        for contacto in contactos:
+            if contacto in r:
+                if contacto == 'bocha':
+                    found = True
+                    webbrowser.open('https://web.whatsapp.com/send?phone=+51940617299')
+                    sleep(10)
+                    quitar = 'enviar a bosha'
+                    r = r.replace(quitar, '')
+                    print(r)
+                    pyautogui.typewrite(r)
+                    pyautogui.press('enter')
+                elif contacto == 'yo':
+                    found = True
+                    webbrowser.open('https://web.whatsapp.com/send?phone=+51951972253')
+                    sleep(10)
+                    quitar = 'enviar a mi'
+                    r = r.replace(quitar, '')
+                    print(r)
+                    pyautogui.typewrite(r)
+                    pyautogui.press('enter')
+        if found != True:
+            talk("Contacto no encontrado")
+    elif 'salir' in r:
+        print("entro en salir")
+        flag = 0
+        talk('Hasta pronto señor')
     else:
         talk('Disculpe señor, no le entendi')
+    return flag
 
-# while True:
-run()
+while flag:
+    flag = listen()
